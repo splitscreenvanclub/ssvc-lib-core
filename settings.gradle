@@ -1,0 +1,10 @@
+rootProject.name = 'ssvc-lib-core'
+include 'domain'
+include 'integration'
+
+rootProject.children.each{ adjustName(it) }
+
+def adjustName(module) {
+    module.name = 'ssvc-core-' + module.name
+}
+

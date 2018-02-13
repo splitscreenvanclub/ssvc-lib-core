@@ -1,0 +1,5 @@
+dependencies {
+    compile project(':ssvc-core-domain')
+    compile 'org.springframework.security:spring-security-crypto:4.0.4.RELEASE'
+    compile 'com.github.jknack:handlebars:4.0.6'
+}
