@@ -4,7 +4,6 @@ group 'uk.org.ssvc.core'
 subprojects {
     apply plugin: 'java'
     apply plugin: 'idea'
-    apply plugin: "net.ltgt.apt"
     sourceCompatibility = 1.8
     group 'uk.org.ssvc.core'
     repositories {
