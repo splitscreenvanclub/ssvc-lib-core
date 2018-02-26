@@ -7,8 +7,12 @@ import lombok.ToString;
 import uk.org.ssvc.core.domain.model.Address;
 import uk.org.ssvc.core.domain.model.ContactDetails;
 import uk.org.ssvc.core.domain.model.Note;
+import uk.org.ssvc.core.domain.model.TelephoneNumber;
+import uk.org.ssvc.core.domain.model.notification.Contact;
+import uk.org.ssvc.core.domain.model.notification.Recipient;
 import uk.org.ssvc.core.domain.model.vehicle.Vehicle;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -39,6 +43,26 @@ public class Member {
 
     public boolean hasValidMembership() {
         return !renewalDate.isRenewalDue();
+    }
+
+    public Recipient asRecipient() {
+        return new Recipient(
+            id, contacts(),
+            contactDetails.primaryMobileNumber().map(TelephoneNumber::getNumber).orElse(null),
+            contactDetails.getEmailAddress()
+        );
+    }
+
+    public List<Contact> contacts() {
+        List<Contact> ret = new ArrayList<>();
+
+        ret.add(new Contact(firstName, lastName));
+
+        associates.stream()
+            .filter(a -> !a.isChild())
+            .forEach(a -> ret.add(new Contact(a.getFirstName(), a.getLastName())));
+
+        return ret;
     }
 
 }
