@@ -3,12 +3,15 @@ package uk.org.ssvc.core.domain.service;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.org.ssvc.core.domain.model.notification.Message;
 import uk.org.ssvc.core.domain.model.notification.MessageType;
 import uk.org.ssvc.core.domain.model.notification.NotificationSendResult;
 import uk.org.ssvc.core.domain.model.notification.Recipient;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
@@ -54,7 +57,7 @@ public class NotificationServiceTest {
             .build();
 
         when(recipient.supportsChannel(EMAIL)).thenReturn(true);
-        when(emailService.sendMessage(recipient, message)).thenReturn(sendResult);
+        when(emailService.sendMessage(eq(recipient), any(Message.class))).thenReturn(sendResult);
 
         assertThat(subject.sendMessage(recipient, message)).isEqualTo(sendResult);
     }
@@ -67,7 +70,7 @@ public class NotificationServiceTest {
 
         when(recipient.supportsChannel(EMAIL)).thenReturn(false);
         when(recipient.supportsChannel(SMS)).thenReturn(true);
-        when(smsService.sendMessage(recipient, message)).thenReturn(sendResult);
+        when(smsService.sendMessage(eq(recipient), any(Message.class))).thenReturn(sendResult);
 
         assertThat(subject.sendMessage(recipient, message)).isEqualTo(sendResult);
     }
@@ -88,6 +91,29 @@ public class NotificationServiceTest {
 
         verify(smsService, never()).sendMessage(recipient, message);
         verify(emailService, never()).sendMessage(recipient, message);
+    }
+
+    @Test
+    public void populatesMessageWithRecipientVariables() throws Exception {
+        Message message = Message.builder()
+            .type(messageTypePreferringEmail)
+            .build();
+
+        when(recipient.supportsChannel(EMAIL)).thenReturn(true);
+        when(recipient.getSalutation()).thenReturn("Ed");
+        when(recipient.getId()).thenReturn("1");
+
+        ArgumentCaptor<Message> messageUsed = ArgumentCaptor.forClass(Message.class);
+
+        subject.sendMessage(recipient, message);
+
+        verify(emailService).sendMessage(eq(recipient), messageUsed.capture());
+
+        Map<String, String> actualVars = messageUsed.getValue().getVariables();
+
+        assertThat(actualVars.get("FNAME")).isEqualTo("Ed");
+        assertThat(actualVars.get("SALUTATION")).isEqualTo("Ed");
+        assertThat(actualVars.get("ID")).isEqualTo("1");
     }
 
 }

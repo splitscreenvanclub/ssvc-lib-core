@@ -22,6 +22,8 @@ public class NotificationService implements Notifier {
         NotificationChannel preferredChannel = message.getType().getPreferredChannel();
         NotificationChannel nextBestChannel = preferredChannel.nextBestChannel();
 
+        message = enrichMessageWithCommonRecipientVariables(message, recipient);
+
         if (recipient.supportsChannel(preferredChannel)) {
             return preferredChannel.sendMessage(recipient, message);
         }
@@ -30,6 +32,14 @@ public class NotificationService implements Notifier {
         }
 
         return new NotificationSendResult(recipient, SendStatus.NOT_ATTEMPTED, null);
+    }
+
+    private Message enrichMessageWithCommonRecipientVariables(Message message, Recipient recipient) {
+        message = message.withVariable("FNAME", recipient.getSalutation());
+        message = message.withVariable("SALUTATION", recipient.getSalutation());
+        message = message.withVariable("ID", recipient.getId());
+
+        return message;
     }
 
 }
