@@ -1,5 +1,6 @@
 package uk.org.ssvc.core.domain.service;
 
+import lombok.extern.slf4j.Slf4j;
 import uk.org.ssvc.core.domain.model.notification.Message;
 import uk.org.ssvc.core.domain.model.notification.NotificationChannel;
 import uk.org.ssvc.core.domain.model.notification.NotificationSendResult;
@@ -10,6 +11,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
+@Slf4j
 public class NotificationService implements Notifier {
 
     @Inject
@@ -31,13 +33,16 @@ public class NotificationService implements Notifier {
             return nextBestChannel.sendMessage(recipient, message);
         }
 
+        log.info("Not sending notification since there was no supported channel; recipient={} message={}",
+            recipient.getId(), message.getType());
+
         return new NotificationSendResult(recipient, SendStatus.NOT_ATTEMPTED, null);
     }
 
     private Message enrichMessageWithCommonRecipientVariables(Message message, Recipient recipient) {
-        message = message.withVariable("FNAME", recipient.getSalutation());
-        message = message.withVariable("SALUTATION", recipient.getSalutation());
-        message = message.withVariable("ID", recipient.getId());
+        message = message.withVariable("fname", recipient.getSalutation());
+        message = message.withVariable("salutation", recipient.getSalutation());
+        message = message.withVariable("id", recipient.getId());
 
         return message;
     }

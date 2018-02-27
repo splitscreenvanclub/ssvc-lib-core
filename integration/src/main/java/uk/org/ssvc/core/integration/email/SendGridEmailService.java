@@ -7,7 +7,6 @@ import com.sendgrid.Personalization;
 import com.sendgrid.Request;
 import com.sendgrid.Response;
 import com.sendgrid.SendGrid;
-import lombok.extern.slf4j.Slf4j;
 import uk.org.ssvc.core.domain.model.notification.Message;
 import uk.org.ssvc.core.domain.model.notification.MessageType;
 import uk.org.ssvc.core.domain.model.notification.NotificationSendResult;
@@ -21,18 +20,19 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static uk.org.ssvc.core.domain.model.notification.MessageType.MEMBERSHIP_DUE_FOR_RENEWAL_NOW;
 import static uk.org.ssvc.core.domain.model.notification.MessageType.MEMBERSHIP_DUE_FOR_RENEWAL_SHORTLY;
 import static uk.org.ssvc.core.domain.model.notification.NotificationChannel.EMAIL;
 import static uk.org.ssvc.core.domain.model.notification.SendStatus.SENT;
 
 @Singleton
-@Slf4j
 public class SendGridEmailService implements EmailService {
 
     private static final Email SENDER = new Email("no-reply@ssvc.org.uk", "The Split Screen Van Club");
     private static final Map<MessageType, String> MESSAGE_TO_TEMPLATE_ID = new HashMap<>();
     static {
         MESSAGE_TO_TEMPLATE_ID.put(MEMBERSHIP_DUE_FOR_RENEWAL_SHORTLY, "a26c8955-a6ab-4ef3-a82e-9615979662a4");
+        MESSAGE_TO_TEMPLATE_ID.put(MEMBERSHIP_DUE_FOR_RENEWAL_NOW, "071c86c8-2e2f-4501-9e5c-bc172d180fc9");
     }
 
     private final SendGrid client;
@@ -49,8 +49,6 @@ public class SendGridEmailService implements EmailService {
         mail.setFrom(SENDER);
         mail.addPersonalization(buildPersonalization(recipient, message));
         mail.setTemplateId(MESSAGE_TO_TEMPLATE_ID.get(message.getType()));
-
-        log.info("Sending email recipient={} messageType={}", recipient, message.getType());
 
         try {
             Response response = client.api(buildRequest(mail));

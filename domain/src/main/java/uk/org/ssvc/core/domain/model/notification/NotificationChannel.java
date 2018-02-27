@@ -18,11 +18,12 @@ public enum NotificationChannel implements Notifier {
 
     public NotificationSendResult sendMessage(Recipient recipient, Message message) {
         if (SsvcRegistry.isDryRun()) {
-            log.info("Would send notification but dry run only; recipient={} message={}",
-                recipient, message);
+            log.info("Would send {} but dry run only; recipient={} message={}",
+                name(), recipient, message);
             return new NotificationSendResult(recipient, SendStatus.SENT, this);
         }
 
+        log.info("Sending {}; recipient={} message={}", name(), recipient.getId(), message.getType());
         return sendFn.apply(new SendRequest(recipient, message));
     }
 
