@@ -2,12 +2,14 @@ package uk.org.ssvc.core.domain.model.notification;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Builder
 @Getter
+@ToString(of = { "type" })
 public class Message {
 
     private final MessageType type;
