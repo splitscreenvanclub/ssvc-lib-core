@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
+import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toList;
 
 @Singleton
@@ -69,7 +70,7 @@ public class EncryptingMemberRepository implements MemberRepository {
             m.getId(),
             fn.apply(m.getFirstName()),
             fn.apply(m.getLastName()),
-            null,
+            emptySet(), // TODO
             new Address(
                 fn.apply(address.getLineOne()),
                 fn.apply(address.getLineTwo()),
