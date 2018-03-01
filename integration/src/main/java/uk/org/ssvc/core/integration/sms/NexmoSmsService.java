@@ -50,7 +50,7 @@ public class NexmoSmsService implements SmsService {
     public NotificationSendResult sendMessage(Recipient recipient, Message message) {
         try {
             String content = templateRenderer.render(MESSAGE_TYPE_TO_TEMPLATE.get(message.getType()), message.getVariables());
-            SmsSubmissionResult[] responses = smsClient.submitMessage(new TextMessage(SENDER, recipient.getMobileNumber(), content, true));
+            SmsSubmissionResult[] responses = smsClient.submitMessage(new TextMessage(SENDER, normalisedNumber(recipient), content, true));
 
             for (SmsSubmissionResult response : responses) {
                 if (isNotBlank(response.getErrorText())) {
@@ -63,6 +63,24 @@ public class NexmoSmsService implements SmsService {
         }
 
         return new NotificationSendResult(recipient, SENT, SMS);
+    }
+
+    private String normalisedNumber(Recipient recipient) {
+        String number = recipient.getMobileNumber();
+
+        number = number.trim().replaceAll("\\s*", "");
+
+        if (number.startsWith("00")) {
+            number = number.replaceFirst("00", "");
+        }
+        if (number.startsWith("0")) {
+            number = "44" + number.substring(1);
+        }
+        if (number.startsWith("+")) {
+            number = number.substring(1);
+        }
+
+        return number;
     }
 
 }
