@@ -4,6 +4,7 @@ import uk.org.ssvc.core.domain.model.Address;
 import uk.org.ssvc.core.domain.model.ContactDetails;
 import uk.org.ssvc.core.domain.model.TelephoneNumber;
 import uk.org.ssvc.core.domain.model.member.Member;
+import uk.org.ssvc.core.domain.model.member.MemberAssociate;
 import uk.org.ssvc.core.domain.model.member.search.MemberFilterCriteria;
 import uk.org.ssvc.core.domain.repository.MemberRepository;
 import uk.org.ssvc.core.integration.encryption.service.EncryptionService;
@@ -15,8 +16,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
-import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 @Singleton
 public class EncryptingMemberRepository implements MemberRepository {
@@ -70,7 +71,12 @@ public class EncryptingMemberRepository implements MemberRepository {
             m.getId(),
             fn.apply(m.getFirstName()),
             fn.apply(m.getLastName()),
-            emptySet(), // TODO
+            m.getAssociates().stream()
+                .map(a -> new MemberAssociate(
+                    fn.apply(a.getFirstName()),
+                    fn.apply(a.getLastName()),
+                    a.getDateOfBirth()))
+                .collect(toSet()),
             new Address(
                 fn.apply(address.getLineOne()),
                 fn.apply(address.getLineTwo()),
