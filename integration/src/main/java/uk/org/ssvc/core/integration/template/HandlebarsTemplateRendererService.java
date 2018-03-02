@@ -1,6 +1,8 @@
 package uk.org.ssvc.core.integration.template;
 
 import com.github.jknack.handlebars.Handlebars;
+import com.google.common.base.Charsets;
+import org.apache.commons.io.IOUtils;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -18,7 +20,9 @@ public class HandlebarsTemplateRendererService implements TemplateRenderer {
     @Override
     public String render(String templateName, Object context) {
         try {
-            return handlebars.compileInline(templateName).apply(context);
+            String templateContent = IOUtils.toString(getClass().getResource(templateName), Charsets.UTF_8);
+
+            return handlebars.compileInline(templateContent).apply(context);
         }
         catch (Exception e) {
             throw new TemplateCompilationException("Failed to render template=" + templateName, e);

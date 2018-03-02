@@ -31,8 +31,8 @@ public class NexmoSmsService implements SmsService {
     private static final String SENDER = "SSVC";
     private static final Map<MessageType, String> MESSAGE_TYPE_TO_TEMPLATE = new HashMap<>();
     static {
-        MESSAGE_TYPE_TO_TEMPLATE.put(MEMBERSHIP_DUE_FOR_RENEWAL_SHORTLY, "renew-required-shortly.hbs");
-        MESSAGE_TYPE_TO_TEMPLATE.put(MEMBERSHIP_DUE_FOR_RENEWAL_NOW, "renew-required-now.hbs");
+        MESSAGE_TYPE_TO_TEMPLATE.put(MEMBERSHIP_DUE_FOR_RENEWAL_SHORTLY, "/templates/renew-required-shortly.hbs");
+        MESSAGE_TYPE_TO_TEMPLATE.put(MEMBERSHIP_DUE_FOR_RENEWAL_NOW, "/templates/renew-required-now.hbs");
     }
 
     private final SmsClient smsClient;
