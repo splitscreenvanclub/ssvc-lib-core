@@ -111,9 +111,9 @@ public class NotificationServiceTest {
 
         Map<String, String> actualVars = messageUsed.getValue().getVariables();
 
-        assertThat(actualVars.get("FNAME")).isEqualTo("Ed");
-        assertThat(actualVars.get("SALUTATION")).isEqualTo("Ed");
-        assertThat(actualVars.get("ID")).isEqualTo("1");
+        assertThat(actualVars.get("fname")).isEqualTo("Ed");
+        assertThat(actualVars.get("salutation")).isEqualTo("Ed");
+        assertThat(actualVars.get("id")).isEqualTo("1");
     }
 
 }
