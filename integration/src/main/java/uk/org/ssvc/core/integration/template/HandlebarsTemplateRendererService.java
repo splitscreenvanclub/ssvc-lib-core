@@ -1,7 +1,6 @@
 package uk.org.ssvc.core.integration.template;
 
 import com.github.jknack.handlebars.Handlebars;
-import com.google.common.base.Charsets;
 import org.apache.commons.io.IOUtils;
 
 import javax.inject.Inject;
@@ -20,7 +19,7 @@ public class HandlebarsTemplateRendererService implements TemplateRenderer {
     @Override
     public String render(String templateName, Object context) {
         try {
-            String templateContent = IOUtils.toString(getClass().getResource(templateName), Charsets.UTF_8);
+            String templateContent = IOUtils.toString(getClass().getResource(templateName), "UTF8");
 
             return handlebars.compileInline(templateContent).apply(context);
         }
