@@ -20,8 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static uk.org.ssvc.core.domain.model.notification.MessageType.MEMBERSHIP_DUE_FOR_RENEWAL_NOW;
-import static uk.org.ssvc.core.domain.model.notification.MessageType.MEMBERSHIP_DUE_FOR_RENEWAL_SHORTLY;
+import static uk.org.ssvc.core.domain.model.notification.MessageType.*;
 import static uk.org.ssvc.core.domain.model.notification.NotificationChannel.SMS;
 import static uk.org.ssvc.core.domain.model.notification.SendStatus.SENT;
 
@@ -33,6 +32,7 @@ public class NexmoSmsService implements SmsService {
     static {
         MESSAGE_TYPE_TO_TEMPLATE.put(MEMBERSHIP_DUE_FOR_RENEWAL_SHORTLY, "/templates/renew-required-shortly.hbs");
         MESSAGE_TYPE_TO_TEMPLATE.put(MEMBERSHIP_DUE_FOR_RENEWAL_NOW, "/templates/renew-required-now.hbs");
+        MESSAGE_TYPE_TO_TEMPLATE.put(MEMBERSHIP_LAPSED, "/templates/membership-lapsed.hbs");
     }
 
     private final SmsClient smsClient;

@@ -20,8 +20,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static uk.org.ssvc.core.domain.model.notification.MessageType.MEMBERSHIP_DUE_FOR_RENEWAL_NOW;
-import static uk.org.ssvc.core.domain.model.notification.MessageType.MEMBERSHIP_DUE_FOR_RENEWAL_SHORTLY;
+import static uk.org.ssvc.core.domain.model.notification.MessageType.*;
 import static uk.org.ssvc.core.domain.model.notification.NotificationChannel.EMAIL;
 import static uk.org.ssvc.core.domain.model.notification.SendStatus.SENT;
 
@@ -32,7 +31,8 @@ public class SendGridEmailService implements EmailService {
     private static final Map<MessageType, String> MESSAGE_TO_TEMPLATE_ID = new HashMap<>();
     static {
         MESSAGE_TO_TEMPLATE_ID.put(MEMBERSHIP_DUE_FOR_RENEWAL_SHORTLY, "a26c8955-a6ab-4ef3-a82e-9615979662a4");
-        MESSAGE_TO_TEMPLATE_ID.put(MEMBERSHIP_DUE_FOR_RENEWAL_NOW, "071c86c8-2e2f-4501-9e5c-bc172d180fc9");
+        MESSAGE_TO_TEMPLATE_ID.put(MEMBERSHIP_DUE_FOR_RENEWAL_NOW, "c36e8776-2d63-4932-9877-9bd831780be9");
+        MESSAGE_TO_TEMPLATE_ID.put(MEMBERSHIP_LAPSED, "071c86c8-2e2f-4501-9e5c-bc172d180fc9");
     }
 
     private final SendGrid client;
