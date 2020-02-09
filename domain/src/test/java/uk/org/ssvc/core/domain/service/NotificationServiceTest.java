@@ -86,7 +86,7 @@ public class NotificationServiceTest {
 
         NotificationSendResult result = subject.sendMessage(recipient, message);
 
-        assertThat(result.getChannelUsed()).isNull();
+        assertThat(result.getChannelUsed()).isEqualTo(SMS);
         assertThat(result.getStatus()).isEqualTo(NOT_ATTEMPTED);
 
         verify(smsService, never()).sendMessage(recipient, message);

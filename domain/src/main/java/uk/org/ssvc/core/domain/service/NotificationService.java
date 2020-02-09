@@ -1,6 +1,7 @@
 package uk.org.ssvc.core.domain.service;
 
 import lombok.extern.slf4j.Slf4j;
+import uk.org.ssvc.core.domain.exception.SsvcExternalServiceException;
 import uk.org.ssvc.core.domain.model.notification.Message;
 import uk.org.ssvc.core.domain.model.notification.NotificationChannel;
 import uk.org.ssvc.core.domain.model.notification.NotificationSendResult;
@@ -9,6 +10,9 @@ import uk.org.ssvc.core.domain.model.notification.SendStatus;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Singleton
 @Slf4j
@@ -22,21 +26,33 @@ public class NotificationService implements Notifier {
     @Override
     public NotificationSendResult sendMessage(Recipient recipient, Message message) {
         NotificationChannel preferredChannel = message.getType().getPreferredChannel();
-        NotificationChannel nextBestChannel = preferredChannel.nextBestChannel();
-
-        message = enrichMessageWithCommonRecipientVariables(message, recipient);
 
         if (recipient.supportsChannel(preferredChannel)) {
-            return preferredChannel.sendMessage(recipient, message);
+            return sendMessageUsingChannel(recipient, message, preferredChannel);
         }
-        else if (recipient.supportsChannel(nextBestChannel)) {
-            return nextBestChannel.sendMessage(recipient, message);
+        else {
+            return sendMessageUsingChannel(recipient, message, preferredChannel.nextBestChannel());
+        }
+    }
+
+    public List<NotificationSendResult> sendMessagesToMultipleChannels(Recipient recipient, Message message, List<NotificationChannel> channels)
+            throws SsvcExternalServiceException {
+        return channels.stream()
+            .map(c -> sendMessageUsingChannel(recipient, message, c))
+            .collect(toList());
+    }
+
+    private NotificationSendResult sendMessageUsingChannel(Recipient recipient, Message message, NotificationChannel channel) {
+        message = enrichMessageWithCommonRecipientVariables(message, recipient);
+
+        if (recipient.supportsChannel(channel)) {
+            return channel.sendMessage(recipient, message);
         }
 
-        log.info("Not sending notification since there was no supported channel; recipient={} message={}",
-            recipient.getId(), message.getType());
+        log.info("Not sending notification since there was channel not supported; recipient={} message={} channel={}",
+            recipient.getId(), message.getType(), channel);
 
-        return new NotificationSendResult(recipient, SendStatus.NOT_ATTEMPTED, null);
+        return new NotificationSendResult(recipient, SendStatus.NOT_ATTEMPTED, channel);
     }
 
     private Message enrichMessageWithCommonRecipientVariables(Message message, Recipient recipient) {
